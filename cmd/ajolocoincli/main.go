@@ -1,30 +1,23 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
-	"github.com/ajolocoin/app"
-	"github.com/ajolocoin/cmd/myajolocoind/cmd"
-	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/cosmos/cosmos-sdk/version"
+	"ajolocoin/app"
 )
 
+// Simple CLI to mint an AjoloteToken with a characteristic.
 func main() {
-	// Configura la aplicación
-	app.Setup()
-
-	// Añade los comandos específicos de tu aplicación
-	rootCmd, _ := cmd.NewRootCmd()
-
-	// Añade el comando de inicio de servidor
-	executor := server.NewCommand(rootCmd)
-
-	// Añade la versión del software
-	executor.Version = version.Version
-	executor.Commit = version.Commit
-
-	// Inicia el servidor
-	if err := executor.Execute(); err != nil {
+	if len(os.Args) < 3 {
+		fmt.Println("usage: ajolocoincli <id> <characteristic>")
 		os.Exit(1)
 	}
+
+	id := os.Args[1]
+	characteristic := os.Args[2]
+
+	a := app.Setup()
+	token := a.Mint(id, characteristic)
+	fmt.Printf("Minted token %s with characteristic %s\n", token.ID, token.Characteristic)
 }
